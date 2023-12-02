@@ -5,10 +5,12 @@
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.web.WebView?>
 
-
-<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/17" xmlns:fx="http://javafx.com/fxml/1"
-            fx:controller="com.example.demo.Controller">
-    <WebView fx:id="webView" layoutX="14.0" layoutY="80.0" prefHeight="312.0" prefWidth="578.0"/>
-    <Button layoutX="14.0" layoutY="54.0" mnemonicParsing="false" onAction="#loadPage" text="Load"/>
-    <TextField fx:id="textField" layoutX="14.0" layoutY="28.0" onAction="#loadPage" prefHeight="26.0" prefWidth="578.0"/>
+<AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.Controller">
+    <WebView fx:id="webView" layoutX="14.0" layoutY="80.0" prefHeight="425.0" prefWidth="730.0" />
+    <Button layoutX="14.0" layoutY="54.0" mnemonicParsing="false" onAction="#loadPage" text="Load" />
+    <TextField fx:id="textField" layoutX="14.0" layoutY="28.0" onAction="#loadPage" prefHeight="26.0" prefWidth="730.0" />
+   <Button layoutX="64.0" layoutY="54.0" mnemonicParsing="false" onAction="#refreshPage" text="refresh" />
+   <Button layoutX="125.0" layoutY="54.0" mnemonicParsing="false" onAction="#zoomIn" prefHeight="18.0" prefWidth="25.0" text="+" />
+   <Button layoutX="157.0" layoutY="54.0" mnemonicParsing="false" onAction="#zoomOut" prefHeight="18.0" prefWidth="26.0" text="-" />
+   <Button layoutX="192.0" layoutY="54.0" mnemonicParsing="false" onAction="#displayHistory" prefHeight="18.0" prefWidth="54.0" text="History" />
 </AnchorPane>
