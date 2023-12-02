@@ -28,14 +28,11 @@ public class Controller implements Initializable {
         engine = webView.getEngine();
         textField.setText(homePage);
         webZoom = 1;
-
         loadPage();
-
-
 
     }
     public void loadPage(){
-        /*engine.load("http://www.google.com");*/
+
         engine.load("http://" + textField.getText());
 
     }
@@ -56,10 +53,35 @@ public class Controller implements Initializable {
         history = engine.getHistory();
         ObservableList<WebHistory.Entry> entries = history.getEntries();
         for(WebHistory.Entry entry : entries){
-            System.out.println(entry);
+            System.out.println(entry.getUrl()+ " " + entry.getLastVisitedDate());
         }
 
     }
+    public void goBack(){
+        history = engine.getHistory();
+        ObservableList<WebHistory.Entry> entries = history.getEntries();
+        int index = history.getCurrentIndex();
+        if (index > 0 ){
+            history.go(-1);
+            textField.setText(entries.get(history.getCurrentIndex()).getUrl());
 
+        }
+
+    }
+    public void goForward(){
+        history = engine.getHistory();
+        ObservableList<WebHistory.Entry> entries = history.getEntries();
+        int index = history.getCurrentIndex();
+        if (index > entries.size()-1){
+            history.go(1);
+            textField.setText(entries.get(history.getCurrentIndex()).getUrl());
+
+        }
+
+    }
+  /* public void executeJS(){
+        engine.executeScript("window.location = \"https://www.youtube.com\";");
+
+    }*/
 
 }
