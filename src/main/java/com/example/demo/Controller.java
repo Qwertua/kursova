@@ -36,15 +36,10 @@ public class Controller implements Initializable {
         textField.setText(homePage);
 
         webZoom = 1;
+        backButton.setDisable(true);
+        forwardButton.setDisable(true);
 
-        // Load the page and initialize history when the page is loaded
-        engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
-            if (newValue == Worker.State.SUCCEEDED) {
-                history = engine.getHistory();
 
-                UpdateButtonStatus();
-            }
-        });
 
         loadPage();
     }
