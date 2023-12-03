@@ -13,7 +13,7 @@
    <Button layoutX="125.0" layoutY="54.0" mnemonicParsing="false" onAction="#zoomIn" prefHeight="18.0" prefWidth="25.0" text="+" />
    <Button layoutX="157.0" layoutY="54.0" mnemonicParsing="false" onAction="#zoomOut" prefHeight="18.0" prefWidth="26.0" text="-" />
    <Button layoutX="192.0" layoutY="54.0" mnemonicParsing="false" onAction="#displayHistory" prefHeight="18.0" prefWidth="54.0" text="History" />
-   <Button layoutX="635.0" layoutY="54.0" mnemonicParsing="false" onAction="#goBack" text="Back" />
-   <Button layoutX="684.0" layoutY="54.0" mnemonicParsing="false" onAction="#goForward" text="Forward" />
+   <Button fx:id="backButton" layoutX="635.0" layoutY="54.0" mnemonicParsing="false" onAction="#goBack" text="Back" />
+   <Button fx:id="forwardButton" layoutX="684.0" layoutY="54.0" mnemonicParsing="false" onAction="#goForward" text="Forward" />
    <!--<Button layoutX="253.0" layoutY="54.0" mnemonicParsing="false" onAction="#executeJS" text="ExecuteJS" />-->
 </AnchorPane>
