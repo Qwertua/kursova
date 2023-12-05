@@ -1,11 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ProgressBar?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.web.WebView?>
 
 <AnchorPane prefHeight="700.0" prefWidth="900.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.example.demo.Controller">
+    <ProgressBar fx:id="progressBar" layoutX="14.0" layoutY="14.0" prefWidth="730.0" />
     <WebView fx:id="webView" layoutX="14.0" layoutY="80.0" prefHeight="425.0" prefWidth="730.0" />
     <Button layoutX="14.0" layoutY="54.0" mnemonicParsing="false" onAction="#loadPage" text="Load" />
     <TextField fx:id="textField" layoutX="14.0" layoutY="28.0" onAction="#loadPage" prefHeight="26.0" prefWidth="730.0" />
@@ -16,4 +18,5 @@
    <Button fx:id="backButton" layoutX="635.0" layoutY="54.0" mnemonicParsing="false" onAction="#goBack" text="Back" />
    <Button fx:id="forwardButton" layoutX="684.0" layoutY="54.0" mnemonicParsing="false" onAction="#goForward" text="Forward" />
    <!--<Button layoutX="253.0" layoutY="54.0" mnemonicParsing="false" onAction="#executeJS" text="ExecuteJS" />-->
+
 </AnchorPane>

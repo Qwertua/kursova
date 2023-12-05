@@ -6,6 +6,7 @@ import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Button;
+import javafx.scene.control.ProgressBar;
 import javafx.scene.control.TextField;
 import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebHistory;
@@ -20,6 +21,8 @@ public class Controller implements Initializable {
     @FXML
     private Button backButton;
     @FXML
+    private ProgressBar progressBar;
+    @FXML
     private WebView webView;
     @FXML
     private TextField textField;
@@ -31,6 +34,8 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        engine = webView.getEngine();
+        progressBar.progressProperty().bind(engine.getLoadWorker().progressProperty());
         homePage = "www.google.com";
         engine = webView.getEngine();
         textField.setText(homePage);
@@ -45,11 +50,14 @@ public class Controller implements Initializable {
     }
 
     public void loadPage() {
+
         engine.load("http://" + textField.getText());
+        progressBar.progressProperty().bind(engine.getLoadWorker().progressProperty());
         engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED) {
                 // Page has been loaded, now get the history
                 history = engine.getHistory();
+
                 System.out.println(history.getCurrentIndex());
                 UpdateButtonStatus();
             }
