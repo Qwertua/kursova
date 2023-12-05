@@ -1,7 +1,6 @@
 package com.example.demo;
 
 import javafx.collections.ObservableList;
-
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -26,56 +25,42 @@ public class Controller implements Initializable {
     private WebView webView;
     @FXML
     private TextField textField;
-    private WebEngine engine;
-    private String homePage;
-    private double webZoom;
-    private WebHistory history ;
 
+    private PageLoader pageLoader;
+    private WebEngine engine;
+    private WebHistory history;
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
         engine = webView.getEngine();
-        progressBar.progressProperty().bind(engine.getLoadWorker().progressProperty());
-        homePage = "www.google.com";
-        engine = webView.getEngine();
-        textField.setText(homePage);
-
-        webZoom = 1;
-        backButton.setDisable(true);
-        forwardButton.setDisable(true);
-
-
+        RealPageLoader realPageLoader = new RealPageLoader(engine);
+        pageLoader = new ProxyPageLoader(realPageLoader, progressBar);
+        textField.setText("www.google.com");
 
         loadPage();
     }
 
     public void loadPage() {
+        pageLoader.loadPage(textField.getText());
 
-        engine.load("http://" + textField.getText());
-        progressBar.progressProperty().bind(engine.getLoadWorker().progressProperty());
-        engine.getLoadWorker().stateProperty().addListener((observable, oldValue, newValue) -> {
+        pageLoader.getLoadWorkerStateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED) {
-                // Page has been loaded, now get the history
                 history = engine.getHistory();
-
-                System.out.println(history.getCurrentIndex());
                 UpdateButtonStatus();
             }
         });
     }
 
     public void refreshPage() {
-        engine.reload();
+        pageLoader.reloadPage();
     }
 
     public void zoomIn() {
-        webView.setZoom(webZoom);
-        webZoom += 0.25;
+        webView.setZoom(webView.getZoom() + 0.25);
     }
 
     public void zoomOut() {
-        webView.setZoom(webZoom);
-        webZoom -= 0.25;
+        webView.setZoom(webView.getZoom() - 0.25);
     }
 
     public void displayHistory() {
