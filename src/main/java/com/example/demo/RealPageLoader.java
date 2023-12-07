@@ -24,4 +24,8 @@ public class RealPageLoader implements PageLoader {
     public ReadOnlyObjectProperty<Worker.State> getLoadWorkerStateProperty() {
         return engine.getLoadWorker().stateProperty();
     }
+
+    public WebEngine getEngine() {
+        return engine;
+    }
 }
