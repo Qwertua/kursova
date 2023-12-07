@@ -6,6 +6,10 @@ import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.web.WebEngine;
+import javafx.scene.web.WebView;
+import javafx.stage.Stage;
+import javafx.application.Platform;
+import javafx.scene.Scene;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -25,17 +29,27 @@ public class ProxyPageLoader implements PageLoader {
     }
 
     private void initializeHandlers() {
-        // Створюємо обробники
         NotFoundHandler notFoundHandler = new NotFoundHandler();
         BadGatewayHandler badGatewayHandler = new BadGatewayHandler();
         ServiceUnavailableHandler serviceUnavailableHandler = new ServiceUnavailableHandler();
 
-        // Встановлюємо посилання на наступний обробник у ланцюгу
         notFoundHandler.setNextHandler(badGatewayHandler);
         badGatewayHandler.setNextHandler(serviceUnavailableHandler);
 
-        // Додаємо перший обробник у ланцюг
         responseHandlers.add(notFoundHandler);
+    }
+
+    private String generateErrorPageContent(int statusCode, String errorMessage) {
+        return String.format("<html><body><h1>Помилка %d: %s</h1></body></html>", statusCode, errorMessage);
+    }
+
+    private void showErrorResponsePage(int statusCode, String errorMessage) {
+        Platform.runLater(() -> {
+            WebEngine errorEngine = realPageLoader.getEngine();
+
+            String content = generateErrorPageContent(statusCode, errorMessage);
+            errorEngine.loadContent(content);
+        });
     }
 
     @Override
@@ -71,12 +85,18 @@ public class ProxyPageLoader implements PageLoader {
 
     private void handleResponse(String url) {
         try {
+            if (url == null || url.trim().isEmpty()) {
+                // Якщо адреса URL порожня, нічого не робимо
+                return;
+            }
+
             WebEngine engine = realPageLoader.getEngine();
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             int statusCode = connection.getResponseCode();
 
             for (ResponseHandler handler : responseHandlers) {
                 if (handler.handleResponse(statusCode)) {
+                    showErrorResponsePage(statusCode, connection.getResponseMessage());
                     break;
                 }
             }
