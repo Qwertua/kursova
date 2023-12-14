@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.loader;
 import javafx.beans.property.ReadOnlyObjectProperty;
 import javafx.concurrent.Worker;
 

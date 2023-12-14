@@ -1,46 +1,48 @@
-package com.example.demo;
-
+package com.example.demo.loader;
+import com.example.demo.handler.ErrorHandlerFactory;
+import com.example.demo.handler.ResponseHandler;
+import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.concurrent.Worker;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.web.WebEngine;
-import javafx.scene.web.WebView;
-import javafx.stage.Stage;
-import javafx.application.Platform;
-import javafx.scene.Scene;
 
 import java.net.HttpURLConnection;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.List;
 
 public class ProxyPageLoader implements PageLoader {
     private RealPageLoader realPageLoader;
     private ProgressBar progressBar;
-    private List<ResponseHandler> responseHandlers;
+    private ResponseHandler errorHandlerChain;
 
-    public ProxyPageLoader(RealPageLoader realPageLoader, ProgressBar progressBar) {
+    public ProxyPageLoader(RealPageLoader realPageLoader, ProgressBar progressBar, List<ErrorHandlerFactory> errorHandlerFactories) {
         this.realPageLoader = realPageLoader;
         this.progressBar = progressBar;
-        this.responseHandlers = new ArrayList<>();
-        initializeHandlers();
+        this.errorHandlerChain = buildErrorHandlerChain(errorHandlerFactories);
     }
 
-    private void initializeHandlers() {
-        NotFoundHandler notFoundHandler = new NotFoundHandler();
-        BadGatewayHandler badGatewayHandler = new BadGatewayHandler();
-        ServiceUnavailableHandler serviceUnavailableHandler = new ServiceUnavailableHandler();
+    private ResponseHandler buildErrorHandlerChain(List<ErrorHandlerFactory> errorHandlerFactories) {
+        ResponseHandler firstHandler = null;
+        ResponseHandler previousHandler = null;
 
-        notFoundHandler.setNextHandler(badGatewayHandler);
-        badGatewayHandler.setNextHandler(serviceUnavailableHandler);
+        for (ErrorHandlerFactory factory : errorHandlerFactories) {
+            ResponseHandler currentHandler = factory.createHandler();
 
-        responseHandlers.add(notFoundHandler);
+            if (previousHandler != null) {
+                previousHandler.setNextHandler(currentHandler);
+            } else {
+                firstHandler = currentHandler;
+            }
+
+            previousHandler = currentHandler;
+        }
+
+        return firstHandler;
     }
 
     private String generateErrorPageContent(int statusCode, String errorMessage) {
-        return String.format("<html><body><h1>Помилка %d: %s</h1></body></html>", statusCode, errorMessage);
+        return String.format("<html><body><h1>Error %d: %s</h1></body></html>", statusCode, errorMessage);
     }
 
     private void showErrorResponsePage(int statusCode, String errorMessage) {
@@ -86,7 +88,6 @@ public class ProxyPageLoader implements PageLoader {
     private void handleResponse(String url) {
         try {
             if (url == null || url.trim().isEmpty()) {
-                // Якщо адреса URL порожня, нічого не робимо
                 return;
             }
 
@@ -94,11 +95,9 @@ public class ProxyPageLoader implements PageLoader {
             HttpURLConnection connection = (HttpURLConnection) new URL(url).openConnection();
             int statusCode = connection.getResponseCode();
 
-            for (ResponseHandler handler : responseHandlers) {
-                if (handler.handleResponse(statusCode)) {
-                    showErrorResponsePage(statusCode, connection.getResponseMessage());
-                    break;
-                }
+            // Виберіть коди статусу, для яких потрібно відобразити сторінку помилок
+            if (statusCode == 404 || statusCode == 502 || statusCode == 503) {
+                showErrorResponsePage(statusCode, connection.getResponseMessage());
             }
 
             connection.disconnect();

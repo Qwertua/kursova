@@ -1,5 +1,12 @@
 package com.example.demo;
 
+import com.example.demo.handler.BadGatewayHandlerFactory;
+import com.example.demo.handler.ErrorHandlerFactory;
+import com.example.demo.handler.NotFoundHandlerFactory;
+import com.example.demo.handler.ServiceUnavailableHandlerFactory;
+import com.example.demo.loader.PageLoader;
+import com.example.demo.loader.ProxyPageLoader;
+import com.example.demo.loader.RealPageLoader;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -12,6 +19,8 @@ import javafx.scene.web.WebHistory;
 import javafx.scene.web.WebView;
 
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.ResourceBundle;
 
 public class Controller implements Initializable {
@@ -34,7 +43,12 @@ public class Controller implements Initializable {
     public void initialize(URL url, ResourceBundle resourceBundle) {
         engine = webView.getEngine();
         RealPageLoader realPageLoader = new RealPageLoader(engine);
-        pageLoader = new ProxyPageLoader(realPageLoader, progressBar);
+        List<ErrorHandlerFactory> errorHandlerFactories = new ArrayList<>();
+        errorHandlerFactories.add(new NotFoundHandlerFactory());
+        errorHandlerFactories.add(new BadGatewayHandlerFactory());
+        errorHandlerFactories.add(new ServiceUnavailableHandlerFactory());
+
+        pageLoader = new ProxyPageLoader(realPageLoader, progressBar, errorHandlerFactories);
         textField.setText("www.google.com");
 
         loadPage();
@@ -72,6 +86,7 @@ public class Controller implements Initializable {
     }
 
     public void goBack() {
+
         history = engine.getHistory();
         ObservableList<WebHistory.Entry> entries = history.getEntries();
         int index = history.getCurrentIndex();
@@ -80,9 +95,11 @@ public class Controller implements Initializable {
             textField.setText(entries.get(history.getCurrentIndex()).getUrl());
         }
         UpdateButtonStatus();
+
     }
 
     public void goForward() {
+
         history = engine.getHistory();
         ObservableList<WebHistory.Entry> entries = history.getEntries();
         int index = history.getCurrentIndex();
@@ -91,6 +108,7 @@ public class Controller implements Initializable {
             textField.setText(entries.get(history.getCurrentIndex()).getUrl());
         }
         UpdateButtonStatus();
+
     }
 
     public void UpdateButtonStatus() {

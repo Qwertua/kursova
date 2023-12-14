@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.handler;
 
 public interface ResponseHandler {
     void setNextHandler(ResponseHandler nextHandler);
