@@ -53,6 +53,12 @@
       <artifactId>javafx-web</artifactId>
       <version>17.0.6</version>
     </dependency>
+    <dependency>
+      <groupId>org.openjfx</groupId>
+      <artifactId>javafx-devtools</artifactId>
+      <version>17.0.6</version> <!-- Replace with your JavaFX version -->
+      <scope>runtime</scope>
+    </dependency>
   </dependencies>
 
   <build>

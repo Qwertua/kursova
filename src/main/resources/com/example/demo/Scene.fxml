@@ -17,6 +17,8 @@
    <Button layoutX="192.0" layoutY="54.0" mnemonicParsing="false" onAction="#displayHistory" prefHeight="18.0" prefWidth="54.0" text="History" />
    <Button fx:id="backButton" layoutX="635.0" layoutY="54.0" mnemonicParsing="false" onAction="#goBack" text="Back" />
    <Button fx:id="forwardButton" layoutX="684.0" layoutY="54.0" mnemonicParsing="false" onAction="#goForward" text="Forward" />
+   <Button fx:id="displayHtmlButton" layoutX="501.0" layoutY="53.0" mnemonicParsing="false" onAction="#displayHtmlStructureOnPage" prefHeight="26.0" prefWidth="126.0" text="displayHtmlButton" />
+   <Button fx:id="executeJsButton" layoutX="391.0" layoutY="54.0" mnemonicParsing="false" onAction="#executeJavaScript" text="executeJsButton" />
    <!--<Button layoutX="253.0" layoutY="54.0" mnemonicParsing="false" onAction="#executeJS" text="ExecuteJS" />-->
 
 </AnchorPane>

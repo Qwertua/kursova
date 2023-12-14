@@ -1,12 +1,13 @@
 package com.example.demo;
 
-import com.example.demo.handler.BadGatewayHandlerFactory;
-import com.example.demo.handler.ErrorHandlerFactory;
-import com.example.demo.handler.NotFoundHandlerFactory;
-import com.example.demo.handler.ServiceUnavailableHandlerFactory;
+import com.example.demo.factory.BadGatewayHandlerFactory;
+import com.example.demo.factory.ErrorHandlerFactory;
+import com.example.demo.factory.NotFoundHandlerFactory;
+import com.example.demo.factory.ServiceUnavailableHandlerFactory;
 import com.example.demo.loader.PageLoader;
 import com.example.demo.loader.ProxyPageLoader;
 import com.example.demo.loader.RealPageLoader;
+import javafx.application.Platform;
 import javafx.collections.ObservableList;
 import javafx.concurrent.Worker;
 import javafx.fxml.FXML;
@@ -34,10 +35,15 @@ public class Controller implements Initializable {
     private WebView webView;
     @FXML
     private TextField textField;
+    @FXML
+    private Button displayHtmlButton;
+    @FXML
+    private Button executeJsButton;
 
     private PageLoader pageLoader;
     private WebEngine engine;
     private WebHistory history;
+
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
@@ -50,6 +56,8 @@ public class Controller implements Initializable {
 
         pageLoader = new ProxyPageLoader(realPageLoader, progressBar, errorHandlerFactories);
         textField.setText("www.google.com");
+        displayHtmlButton.setOnAction(event -> displayHtmlStructureOnPage());
+        executeJsButton.setOnAction(event -> executeJavaScript());
 
         loadPage();
     }
@@ -61,6 +69,7 @@ public class Controller implements Initializable {
             if (newValue == Worker.State.SUCCEEDED) {
                 history = engine.getHistory();
                 UpdateButtonStatus();
+
             }
         });
     }
@@ -118,4 +127,32 @@ public class Controller implements Initializable {
         backButton.setDisable(currentIndex <= 0);
         forwardButton.setDisable(currentIndex >= totalEntries - 1);
     }
-}
+    public void displayHtmlStructureOnPage() {
+        String htmlStructure = (String) engine.executeScript("document.documentElement.outerHTML");
+        String formattedHtml = "<html><body><pre>" + escapeHtml(htmlStructure) + "</pre></body></html>";
+        Platform.runLater(() -> engine.loadContent(formattedHtml));
+
+    }
+    private String escapeHtml(String html) {
+        return html
+                .replace("&", "&amp;")
+                .replace("<", "&lt;")
+                .replace(">", "&gt;")
+                .replace("\"", "&quot;")
+                .replace("'", "&#39;");
+    }
+    public void executeJavaScript() {
+        String script = """
+            var scriptElements = document.getElementsByTagName('script');
+            var jsContent = '';
+            for (var i = 0; i < scriptElements.length; i++) {
+                jsContent += scriptElements[i].outerHTML + '\\n\\n';
+            }
+            jsContent;
+            """;
+        String jsContent = (String) engine.executeScript(script);
+        Platform.runLater(() -> engine.loadContent("<html><body><pre>" + escapeHtml(jsContent) + "</pre></body></html>"));
+
+    }
+
+    }

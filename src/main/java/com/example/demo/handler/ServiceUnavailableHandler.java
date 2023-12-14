@@ -5,8 +5,8 @@ public class ServiceUnavailableHandler extends BaseResponseHandler {
     public boolean handleResponse(int statusCode) {
         if (statusCode == 503) {
 
-            // Handle 503 error, e.g., display a message to the user
-            return true; // Handled
+           /* Обробка помилки 503*/
+            return true;
         } else {
             return callNextHandler(statusCode);
         }

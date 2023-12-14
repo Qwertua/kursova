@@ -4,8 +4,8 @@ public class NotFoundHandler extends BaseResponseHandler {
     public boolean handleResponse(int statusCode) {
         if (statusCode == 404) {
 
-            // Handle 404 error, e.g., display a message to the user
-            return true; // Handled
+          /*   Обробка помилки 404*/
+            return true;
         } else {
             return callNextHandler(statusCode);
         }

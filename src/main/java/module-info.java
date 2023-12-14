@@ -11,4 +11,6 @@ module com.example.demo {
     opens com.example.demo.loader to javafx.fxml;
     exports com.example.demo.handler;
     opens com.example.demo.handler to javafx.fxml;
+    exports com.example.demo.factory;
+    opens com.example.demo.factory to javafx.fxml;
 }

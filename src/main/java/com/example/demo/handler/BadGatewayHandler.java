@@ -4,8 +4,8 @@ public class BadGatewayHandler extends BaseResponseHandler {
     public boolean handleResponse(int statusCode) {
         if (statusCode == 502) {
 
-            // Handle 502 error, e.g., display a message to the user
-            return true; // Handled
+          /*  Обробка помилки 502 */
+            return true;
         } else {
             return callNextHandler(statusCode);
         }

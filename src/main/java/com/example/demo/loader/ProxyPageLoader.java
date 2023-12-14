@@ -1,5 +1,5 @@
 package com.example.demo.loader;
-import com.example.demo.handler.ErrorHandlerFactory;
+import com.example.demo.factory.ErrorHandlerFactory;
 import com.example.demo.handler.ResponseHandler;
 import javafx.application.Platform;
 import javafx.beans.property.ReadOnlyObjectProperty;
@@ -56,11 +56,14 @@ public class ProxyPageLoader implements PageLoader {
 
     @Override
     public void loadPage(String url) {
+        /*Встановлюємо видимою шкалу завантаження сторінки*/
         progressBar.setVisible(true);
+        /*завантаження сторінки  за допомогою realPageLoader*/
         realPageLoader.loadPage(url);
-
+        /*відстежуємо зміну стану за допомогою слухача подій*/
         realPageLoader.getLoadWorkerStateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED) {
+                /*коли стан завантаження успішний прибираємо шкалу завантаження сторінки та викликаємо метод handleresponse*/
                 progressBar.setVisible(false);
                 handleResponse(realPageLoader.getEngine().getLocation());
             }
@@ -69,11 +72,14 @@ public class ProxyPageLoader implements PageLoader {
 
     @Override
     public void reloadPage() {
+        /*Встановлюємо видимою шкалу завантаження сторінки*/
         progressBar.setVisible(true);
+        /*перезавантаження сторінки  за допомогою realPageLoader*/
         realPageLoader.reloadPage();
-
+        /*відстежуємо зміну стану за допомогою слухача подій*/
         realPageLoader.getLoadWorkerStateProperty().addListener((observable, oldValue, newValue) -> {
             if (newValue == Worker.State.SUCCEEDED) {
+                /*коли стан завантаження успішний прибираємо шкалу завантаження сторінки та викликаємо метод handleresponse*/
                 progressBar.setVisible(false);
                 handleResponse(realPageLoader.getEngine().getLocation());
             }
@@ -81,6 +87,7 @@ public class ProxyPageLoader implements PageLoader {
     }
 
     @Override
+    /*Повертає властивість стану завантаження з RealPageLoader.*/
     public ReadOnlyObjectProperty<Worker.State> getLoadWorkerStateProperty() {
         return realPageLoader.getLoadWorkerStateProperty();
     }
