@@ -39,6 +39,9 @@ public class Controller implements Initializable {
     private Button displayHtmlButton;
     @FXML
     private Button executeJsButton;
+    @FXML
+    private Button closeButton;
+
 
     private PageLoader pageLoader;
     private WebEngine engine;
@@ -60,7 +63,9 @@ public class Controller implements Initializable {
         executeJsButton.setOnAction(event -> executeJavaScript());
 
         loadPage();
+        closeButton.setDisable(true);
     }
+
 
     public void loadPage() {
         pageLoader.loadPage(textField.getText());
@@ -73,6 +78,7 @@ public class Controller implements Initializable {
             }
         });
     }
+
 
     public void refreshPage() {
         pageLoader.reloadPage();
@@ -127,12 +133,15 @@ public class Controller implements Initializable {
         backButton.setDisable(currentIndex <= 0);
         forwardButton.setDisable(currentIndex >= totalEntries - 1);
     }
+
     public void displayHtmlStructureOnPage() {
         String htmlStructure = (String) engine.executeScript("document.documentElement.outerHTML");
         String formattedHtml = "<html><body><pre>" + escapeHtml(htmlStructure) + "</pre></body></html>";
         Platform.runLater(() -> engine.loadContent(formattedHtml));
+        closeButton.setDisable(false);
 
     }
+
     private String escapeHtml(String html) {
         return html
                 .replace("&", "&amp;")
@@ -141,18 +150,26 @@ public class Controller implements Initializable {
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
     }
+
     public void executeJavaScript() {
         String script = """
-            var scriptElements = document.getElementsByTagName('script');
-            var jsContent = '';
-            for (var i = 0; i < scriptElements.length; i++) {
-                jsContent += scriptElements[i].outerHTML + '\\n\\n';
-            }
-            jsContent;
-            """;
+                var scriptElements = document.getElementsByTagName('script');
+                var jsContent = '';
+                for (var i = 0; i < scriptElements.length; i++) {
+                    jsContent += scriptElements[i].outerHTML + '\\n\\n';
+                }
+                jsContent;
+                """;
         String jsContent = (String) engine.executeScript(script);
         Platform.runLater(() -> engine.loadContent("<html><body><pre>" + escapeHtml(jsContent) + "</pre></body></html>"));
-
+        closeButton.setDisable(false);
     }
 
+    public void closePageView() {
+        closeButton.setDisable(true);
+        // Додайте код для перезавантаження сторінки тут
+        loadPage();
+
+
     }
+}
