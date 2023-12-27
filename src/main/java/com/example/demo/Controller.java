@@ -134,37 +134,44 @@ public class Controller implements Initializable {
         forwardButton.setDisable(currentIndex >= totalEntries - 1);
     }
 
+    /**
+     * Відображає структуру HTML поточної веб-сторінки.
+     * Отримує повний HTML поточної сторінки та відображає його в WebEngine.
+     */
     public void displayHtmlStructureOnPage() {
-        String htmlStructure = (String) engine.executeScript("document.documentElement.outerHTML");
-        String formattedHtml = "<html><body><pre>" + escapeHtml(htmlStructure) + "</pre></body></html>";
-        Platform.runLater(() -> engine.loadContent(formattedHtml));
+        String htmlContent = (String) engine.executeScript("document.documentElement.outerHTML");
+        ContentVisitor visitor = new DisplayContentVisitor(engine);
+        visitor.visitHtmlContent(htmlContent);
         closeButton.setDisable(false);
-
     }
 
-    private String escapeHtml(String html) {
+ /*   private String escapeHtml(String html) {
         return html
                 .replace("&", "&amp;")
                 .replace("<", "&lt;")
                 .replace(">", "&gt;")
                 .replace("\"", "&quot;")
                 .replace("'", "&#39;");
-    }
+    }*/
 
+    /**
+     * Виконує JavaScript на поточній веб-сторінці та відображає вихідні дані.
+     * Збирає та відображає зміст усіх тегів <script> на поточній сторінці.
+     */
     public void executeJavaScript() {
         String script = """
-                var scriptElements = document.getElementsByTagName('script');
-                var jsContent = '';
-                for (var i = 0; i < scriptElements.length; i++) {
-                    jsContent += scriptElements[i].outerHTML + '\\n\\n';
-                }
-                jsContent;
-                """;
+            var scriptElements = document.getElementsByTagName('script');
+            var jsContent = '';
+            for (var i = 0; i < scriptElements.length; i++) {
+                jsContent += scriptElements[i].outerHTML + '\\n\\n';
+            }
+            jsContent;
+            """;
         String jsContent = (String) engine.executeScript(script);
-        Platform.runLater(() -> engine.loadContent("<html><body><pre>" + escapeHtml(jsContent) + "</pre></body></html>"));
+        ContentVisitor visitor = new DisplayContentVisitor(engine);
+        visitor.visitJsContent(jsContent);
         closeButton.setDisable(false);
     }
-
     public void closePageView() {
         closeButton.setDisable(true);
         // Додайте код для перезавантаження сторінки тут
