@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.visitor;
 
 /**
  * Інтерфейс Visitor для обробки різних типів веб-контенту.

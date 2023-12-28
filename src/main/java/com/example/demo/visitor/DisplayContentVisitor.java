@@ -1,5 +1,6 @@
-package com.example.demo;
+package com.example.demo.visitor;
 
+import com.example.demo.visitor.ContentVisitor;
 import javafx.application.Platform;
 import javafx.scene.web.WebEngine;
 
